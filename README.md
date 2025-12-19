@@ -80,3 +80,9 @@ El stock se descuenta al pagar una venta
 No se permite stock negativo
 
 Cancelar una venta revierte el stock
+
+
+### 👨‍💻 Autor
+
+Juan M
+Desarrollador .NET
