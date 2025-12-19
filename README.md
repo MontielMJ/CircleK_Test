@@ -50,7 +50,7 @@ La solución está organizada siguiendo **Clean Architecture**:
 
 ### 1️⃣ Clonar repositorio
 
-git clone https://github.com/tu-usuario/mini-pos.git
+git clone https://github.com/MontielMJ/CircleK_Test.git
 cd mini-pos
 
 
