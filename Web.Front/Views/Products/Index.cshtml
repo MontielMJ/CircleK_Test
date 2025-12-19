@@ -1,0 +1,53 @@
+﻿@using Application.Dtos
+@model List<ProductDto>
+
+<h3>Productos</h3>
+
+<form class="row mb-3">
+    <div class="col-md-6">
+        <input name="search" class="form-control"
+               placeholder="Buscar por SKU o nombre" />
+    </div>
+    <div class="col-md-6 text-end">
+        <a asp-action="Create" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> Nuevo
+        </a>
+    </div>
+</form>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>SKU</th>
+            <th>Nombre</th>
+            <th class="text-end">Precio</th>
+            <th class="text-center">Stock</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var p in Model)
+        {
+            <tr>
+                <td>@p.SKU</td>
+                <td>@p.Name</td>
+                <td class="text-end">@p.Price.ToString("C")</td>
+                <td class="text-center">@p.Stock</td>
+                <td class="text-end">
+                    <a asp-action="Edit" asp-route-id="@p.Id"
+                       class="btn btn-sm btn-warning">
+                        <i class="bi bi-pencil"></i>
+                    </a>
+
+                    <form asp-action="Delete" asp-route-id="@p.Id"
+                          method="post" class="d-inline"
+                          onsubmit="return confirm('¿Eliminar producto?')">
+                        <button class="btn btn-sm btn-danger">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

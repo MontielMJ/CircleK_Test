@@ -1,0 +1,11 @@
+C:\Users\Unico\source\repos\sln_CircleK\Domain\bin\Debug\net8.0\Domain.deps.json
+C:\Users\Unico\source\repos\sln_CircleK\Domain\bin\Debug\net8.0\Domain.dll
+C:\Users\Unico\source\repos\sln_CircleK\Domain\bin\Debug\net8.0\Domain.pdb
+C:\Users\Unico\source\repos\sln_CircleK\Domain\obj\Debug\net8.0\Domain.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Unico\source\repos\sln_CircleK\Domain\obj\Debug\net8.0\Domain.AssemblyInfoInputs.cache
+C:\Users\Unico\source\repos\sln_CircleK\Domain\obj\Debug\net8.0\Domain.AssemblyInfo.cs
+C:\Users\Unico\source\repos\sln_CircleK\Domain\obj\Debug\net8.0\Domain.csproj.CoreCompileInputs.cache
+C:\Users\Unico\source\repos\sln_CircleK\Domain\obj\Debug\net8.0\Domain.dll
+C:\Users\Unico\source\repos\sln_CircleK\Domain\obj\Debug\net8.0\refint\Domain.dll
+C:\Users\Unico\source\repos\sln_CircleK\Domain\obj\Debug\net8.0\Domain.pdb
+C:\Users\Unico\source\repos\sln_CircleK\Domain\obj\Debug\net8.0\ref\Domain.dll

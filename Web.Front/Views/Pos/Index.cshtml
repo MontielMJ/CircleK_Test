@@ -1,0 +1,114 @@
+﻿@model CartViewModel
+@{
+    ViewData["Title"] = "POS";
+}
+
+<h2><i class="bi bi-cart"></i> Punto de Venta</h2>
+
+<div class="col-auto">
+    <button class="btn btn-primary mb-3"
+            data-bs-toggle="modal"
+            data-bs-target="#productSearchModal">
+        <i class="bi bi-search"></i>
+        Buscar producto
+    </button>
+</div>
+
+
+<div id="products"></div>
+
+<table class="table mt-3">
+    <thead>
+        <tr>
+            <th>Producto</th>
+            <th>Cant</th>
+            <th>Total</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var i in Model.Items)
+        {
+            <tr>
+                <td>@i.Name</td>
+                <td>@i.Quantity</td>
+                <td>@i.Total.ToString("C")</td>
+                <td>
+                    <form asp-action="Remove" method="post">
+                        <input type="hidden" name="productId" value="@i.ProductId" />
+                        <button class="btn btn-danger btn-sm">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div class="text-end">
+    <p>Subtotal: <strong>@Model.Subtotal.ToString("C")</strong></p>
+    <p>IVA: <strong>@Model.Tax.ToString("C")</strong></p>
+    <h4>Total: <strong>@Model.Total.ToString("C")</strong></h4>
+</div>
+
+<form asp-action="SaveSale" method="post">
+    <button class="btn btn-warning" @(Model.Items.Any() ? "" : "disabled")>
+        Guardar Venta
+    </button>
+</form>
+
+@await Html.PartialAsync("_salesResult")
+
+<div class="modal fade" id="productSearchModal" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="bi bi-search"></i>
+                    Buscar productos
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+                <form id="searchForm">
+                    <div class="input-group mb-3">
+                        <input name="search"
+                               class="form-control"
+                               placeholder="SKU o nombre"
+                               autofocus />
+                        <button class="btn btn-outline-primary">
+                            <i class="bi bi-search"></i>
+                        </button>
+                    </div>
+                </form>
+
+                <div id="productResults"></div>
+            </div>
+
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <script>
+        const searchForm = document.getElementById("searchForm");
+        const resultsDiv = document.getElementById("productResults");
+
+        searchForm.addEventListener("submit", async e => {
+            e.preventDefault();
+
+            const params = new URLSearchParams(new FormData(searchForm));
+            const res = await fetch(`/Pos/Search?${params}`);
+            resultsDiv.innerHTML = await res.text();
+        });
+
+        function onAddProduct() {
+            const modal = bootstrap.Modal.getInstance(
+                document.getElementById('productSearchModal')
+            );
+            modal.hide();
+        }
+    </script>
+}

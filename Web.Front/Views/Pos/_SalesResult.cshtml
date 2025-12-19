@@ -1,0 +1,62 @@
+﻿@model CartViewModel
+
+<br />
+<br />
+@if (!Model.ItemsSale.Any())
+{
+    <div class="alert alert-warning">
+        <i class="bi bi-exclamation-triangle"></i>
+        No se encontraron ventas registradas
+    </div>
+}
+else
+{
+    <table class="table table-hover">
+        <thead class="table-light">
+            <tr>
+                <th>Folio</th>
+                <th>Subtotal</th>
+                <th class="text-end">Tax</th>
+                <th class="text-center">Total</th>
+                <th class="text-end">Status</th>
+                <th class="text-center">Accion</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var p in Model.ItemsSale)
+            {
+                <tr>
+                    <td>@p.Folio</td>
+                    <td>@p.Subtotal</td>
+                    <td class="text-end">@p.Tax.ToString("C")</td>
+                    <td class="text-end">@p.Total.ToString("C")</td>
+                    <td class="text-end">@p.Status</td>
+                    <td class="text-center">
+                        <button class="btn
+                            @(p.Status == "Paid" ? "btn-success" :
+                              p.Status == "Pending" ? "btn-warning" :
+                              p.Status == "Cancelled" ? "btn-danger" :
+                              "btn-primary") mt-2"
+                                data-sale-id="@p.Id"
+                                data-bs-toggle="modal"
+                                data-bs-target="#payModal"
+                        @(p.Status == "Paid" || p.Status == "Cancelled" ? "disabled" : "")>
+
+                            <i class="bi
+        @(p.Status == "Paid" ? "bi-check-circle" :
+          p.Status == "Pending" ? "bi-clock" :
+          p.Status == "Cancelled" ? "bi-x-circle" :
+          "bi-cash")"></i>
+
+                            @(p.Status == "Paid" ? "Pagado" :
+                                p.Status == "Pending" ? "Pendiente" :
+                                p.Status == "Cancelled" ? "Cancelado" :
+                                "Cobrar")
+                        </button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+@await Html.PartialAsync("_PayModal")

@@ -1,0 +1,38 @@
+## Build results
+bin/
+obj/
+
+## User-specific files
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+## Visual Studio
+.vs/
+
+## Visual Studio Code
+.vscode/
+
+## Rider
+.idea/
+
+## OS
+.DS_Store
+Thumbs.db
+
+## Logs
+*.log
+
+## SQLite
+*.db
+*.db-shm
+*.db-wal
+
+
+## EF Core
+Migrations/*.Designer.cs
+Migrations/*.snapshots
+
+## Publish
+publish/
