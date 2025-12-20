@@ -1,4 +1,4 @@
-﻿using Application.Dtos;
+using Application.Dtos;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +12,6 @@ namespace Application.UseCases.Sales
         Task CancelSaleAsync(int saleId, CancellationToken ct = default);
         Task<SaleDto> CreateSaleAsync(CreateSaleRequest request, CancellationToken ct = default);
         Task<PaySaleResult> PaySaleAsync(int saleId, PaySaleRequest request, CancellationToken ct = default);
-        Task<List<SaleDto>> GetSalesAsync(); 
+        Task<List<SaleDto>> GetSalesAsync(CancellationToken ct = default); 
     }
 }

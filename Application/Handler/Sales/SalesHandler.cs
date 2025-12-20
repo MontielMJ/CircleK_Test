@@ -1,6 +1,7 @@
-﻿using Application.Dtos;
+using Application.Dtos;
 using Application.Interfaces.Repositories;
 using Application.UseCases.Sales;
+using Domain.Exceptions;
 
 namespace Application.Handler.Sales
 {
@@ -11,26 +12,67 @@ namespace Application.Handler.Sales
         {
              _salesRepository=salesRepository;
         }
-        public async Task CancelSaleAsync(int saleId, CancellationToken ct = default)
+public async Task CancelSaleAsync(int saleId, CancellationToken ct = default)
         {
-            await _salesRepository.CancelSaleAsync(saleId, ct);
+            try
+            {
+                await _salesRepository.CancelSaleAsync(saleId, ct);
+            }
+            catch (DomainException)
+            {
+                throw;
+            }
+            catch (Exception ex)
+            {
+                throw new BusinessException($"Failed to cancel sale with id {saleId}", ex);
+            }
         }
 
-        public async Task<SaleDto> CreateSaleAsync(CreateSaleRequest request, CancellationToken ct = default)
+public async Task<SaleDto> CreateSaleAsync(CreateSaleRequest request, CancellationToken ct = default)
         {
-            SaleDto sale = await _salesRepository.CreateSaleAsync(request, ct);
-            return sale;
+            try
+            {
+                SaleDto sale = await _salesRepository.CreateSaleAsync(request, ct);
+                return sale;
+            }
+            catch (DomainException)
+            {
+                throw;
+            }
+            catch (Exception ex)
+            {
+                throw new BusinessException("Failed to create sale", ex);
+            }
         }
 
-        public async Task<List<SaleDto>> GetSalesAsync()
+public async Task<List<SaleDto>> GetSalesAsync(CancellationToken ct = default)
         {
-            List<SaleDto> sales = await _salesRepository.GetSalesAsync();
-            return sales;
+            try
+            {
+                List<SaleDto> sales = await _salesRepository.GetSalesAsync();
+                return sales;
+            }
+            catch (Exception ex)
+            {
+                throw new BusinessException("Failed to retrieve sales", ex);
+            }
         }
 
-        public Task<PaySaleResult> PaySaleAsync(int saleId, PaySaleRequest request, CancellationToken ct = default)
+public async Task<PaySaleResult> PaySaleAsync(int saleId, PaySaleRequest request, CancellationToken ct = default)
         {
-            return _salesRepository.PaySaleAsync(saleId, request, ct);
+            try
+            {
+                PaySaleResult result = await _salesRepository.PaySaleAsync(saleId, request, ct);
+                return result;
+            }
+            catch (DomainException)
+            {
+                throw;
+            }
+            catch (Exception ex)
+            {
+                throw new BusinessException($"Failed to process payment for sale {saleId}", ex);
+            }
         }
     }
 }

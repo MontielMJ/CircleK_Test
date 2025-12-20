@@ -1,0 +1,13 @@
+.git/
+.gitignore
+.vs/
+bin/
+obj/
+*.user
+*.suo
+*.db
+sqlite-data/
+docker-compose.override.yml
+README.md
+*.bat
+*.ps1

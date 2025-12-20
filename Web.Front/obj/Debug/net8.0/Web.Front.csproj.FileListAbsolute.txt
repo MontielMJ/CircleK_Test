@@ -215,6 +215,7 @@ C:\Users\Unico\source\repos\sln_CircleK\Web.Front\obj\Debug\net8.0\Web.Front.csp
 C:\Users\Unico\source\repos\sln_CircleK\Web.Front\obj\Debug\net8.0\Web.Front.MvcApplicationPartsAssemblyInfo.cache
 C:\Users\Unico\source\repos\sln_CircleK\Web.Front\obj\Debug\net8.0\Web.Front.RazorAssemblyInfo.cache
 C:\Users\Unico\source\repos\sln_CircleK\Web.Front\obj\Debug\net8.0\Web.Front.RazorAssemblyInfo.cs
+C:\Users\Unico\source\repos\sln_CircleK\Web.Front\obj\Debug\net8.0\Web.Front.sourcelink.json
 C:\Users\Unico\source\repos\sln_CircleK\Web.Front\obj\Debug\net8.0\staticwebassets.build.json
 C:\Users\Unico\source\repos\sln_CircleK\Web.Front\obj\Debug\net8.0\staticwebassets.development.json
 C:\Users\Unico\source\repos\sln_CircleK\Web.Front\obj\Debug\net8.0\staticwebassets\msbuild.Web.Front.Microsoft.AspNetCore.StaticWebAssets.props
