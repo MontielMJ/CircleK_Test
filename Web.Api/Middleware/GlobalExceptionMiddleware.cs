@@ -21,45 +21,69 @@ namespace Web.Api.Middleware
             {
                 await _next(context);
             }
-            catch (Exception ex)
+catch (Exception ex)
             {
-                _logger.LogError(ex, "An unhandled exception occurred");
+                _logger.LogError(ex, "An unhandled exception occurred: {Message}", ex.Message);
                 await HandleExceptionAsync(context, ex);
             }
         }
 
-        private static async Task HandleExceptionAsync(HttpContext context, Exception exception)
+private static async Task HandleExceptionAsync(HttpContext context, Exception exception)
         {
-            context.Response.ContentType = "application/json";
+            context.Response.ContentType = "application/problem+json";
             
-            var response = new ErrorResponse
+            var problemDetails = new ProblemDetails
             {
-                Message = exception.Message,
+                Instance = context.Request.Path,
                 TraceId = context.TraceIdentifier
             };
 
             switch (exception)
             {
                 case NotFoundException:
-                    context.Response.StatusCode = (int)HttpStatusCode.NotFound;
+                    problemDetails.Type = HttpProblemTypes.NotFound;
+                    problemDetails.Title = "Resource Not Found";
+                    problemDetails.Status = StatusCodes.Status404NotFound;
+                    problemDetails.Detail = exception.Message;
                     break;
                 case ValidationException:
-                    context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                    problemDetails.Type = HttpProblemTypes.ValidationError;
+                    problemDetails.Title = "Validation Error";
+                    problemDetails.Status = StatusCodes.Status400BadRequest;
+                    problemDetails.Detail = exception.Message;
                     break;
                 case DuplicateSkuException:
-                    context.Response.StatusCode = (int)HttpStatusCode.Conflict;
+                    problemDetails.Type = HttpProblemTypes.Conflict;
+                    problemDetails.Title = "Resource Conflict";
+                    problemDetails.Status = StatusCodes.Status409Conflict;
+                    problemDetails.Detail = exception.Message;
                     break;
                 case InsufficientStockException:
                 case InvalidPaymentException:
-                    context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                    problemDetails.Type = HttpProblemTypes.ValidationError;
+                    problemDetails.Title = "Business Rule Violation";
+                    problemDetails.Status = StatusCodes.Status400BadRequest;
+                    problemDetails.Detail = exception.Message;
                     break;
                 case BusinessException:
-                    context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                    problemDetails.Type = HttpProblemTypes.InternalServerError;
+                    problemDetails.Title = "Server Error";
+                    problemDetails.Status = StatusCodes.Status500InternalServerError;
+                    problemDetails.Detail = exception.Message;
                     break;
                 default:
-                    context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-                    response.Message = "An unexpected error occurred";
+                    problemDetails.Type = HttpProblemTypes.InternalServerError;
+                    problemDetails.Title = "Server Error";
+                    problemDetails.Status = StatusCodes.Status500InternalServerError;
+                    problemDetails.Detail = "An unexpected error occurred";
                     break;
+            }
+
+            // Add additional context for development
+            if (context.RequestServices.GetRequiredService<IWebHostEnvironment>().IsDevelopment())
+            {
+                problemDetails.Extensions["exception"] = exception.ToString();
+                problemDetails.Extensions["stackTrace"] = exception.StackTrace;
             }
 
             var jsonOptions = new JsonSerializerOptions
@@ -67,14 +91,10 @@ namespace Web.Api.Middleware
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase
             };
 
-            var jsonResponse = JsonSerializer.Serialize(response, jsonOptions);
+            var jsonResponse = JsonSerializer.Serialize(problemDetails, jsonOptions);
             await context.Response.WriteAsync(jsonResponse);
         }
     }
 
-    public class ErrorResponse
-    {
-        public string Message { get; set; } = string.Empty;
-        public string TraceId { get; set; } = string.Empty;
-    }
+// Replaced by ProblemDetails class for better HTTP compliance
 }

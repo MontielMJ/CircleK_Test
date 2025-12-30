@@ -19,7 +19,7 @@ namespace Web.Api.Controllers
 
         }
 
-[HttpGet]
+        [HttpGet]
         public async Task<IActionResult> Get([FromQuery] string? search)
         {
             try
@@ -30,7 +30,7 @@ namespace Web.Api.Controllers
                     Page = 1,
                     PageSize = 10
                 };
-
+                
                 var result = await _productsUseCase.getProductsSkuName(query);
                 return Ok(result);
             }
@@ -44,7 +44,7 @@ namespace Web.Api.Controllers
             }
         }
 
-[HttpGet("{id}")]
+        [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
             try
@@ -66,7 +66,7 @@ namespace Web.Api.Controllers
             }
         }
 
-[HttpPost]
+        [HttpPost]
         public async Task<IActionResult> Create(ProductRequest request)
         {
             try
@@ -91,7 +91,7 @@ namespace Web.Api.Controllers
                 return StatusCode(500, new { error = "An unexpected error occurred" });
             }
         }
-[HttpPut("{id}")]
+        [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, ProductRequest request)
         {
             try
@@ -116,7 +116,7 @@ namespace Web.Api.Controllers
                 return StatusCode(500, new { error = "An unexpected error occurred" });
             }
         }
-[HttpDelete("{id}")]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
             try

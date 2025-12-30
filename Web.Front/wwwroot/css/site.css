@@ -1,22 +1,153 @@
+/* ===== VARIABLES DE COLOR Y TEMA ===== */
+:root {
+    --primary-color: #007bff;
+    --primary-hover: #0056b3;
+    --secondary-color: #6c757d;
+    --success-color: #28a745;
+    --warning-color: #ffc107;
+    --danger-color: #dc3545;
+    --info-color: #17a2b8;
+    --light-color: #f8f9fa;
+    --dark-color: #343a40;
+    --border-color: #dee2e6;
+    --shadow-color: rgba(0, 0, 0, 0.1);
+    --font-family-base: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --font-size-base: 0.9375rem;
+    --line-height-base: 1.5;
+}
+
+/* ===== ESTILOS BASE ===== */
 html {
-  font-size: 14px;
+    font-size: 14px;
+    scroll-behavior: smooth;
 }
 
 @media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
-}
-
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
-
-html {
-  position: relative;
-  min-height: 100%;
+    html {
+        font-size: 16px;
+    }
 }
 
 body {
-  margin-bottom: 60px;
+    font-family: var(--font-family-base);
+    font-size: var(--font-size-base);
+    line-height: var(--line-height-base);
+    color: var(--dark-color);
+    background-color: var(--light-color);
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    flex: 1;
+    margin-bottom: 2rem;
+}
+
+/* ===== COMPONENTES REUTILIZABLES ===== */
+.btn-circlek {
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
+    border: none;
+    border-radius: 6px;
+    color: white;
+    font-weight: 500;
+    padding: 0.5rem 1.5rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px var(--shadow-color);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 120px;
+}
+
+.btn-circlek:hover {
+    background: linear-gradient(135deg, var(--primary-hover), var(--primary-color));
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px var(--shadow-color);
+    color: white;
+    text-decoration: none;
+}
+
+.btn-circlek:focus {
+    outline: none;
+    box-shadow: 0 0 0 0.2rem var(--primary-color);
+}
+
+.btn-circlek-success {
+    background: linear-gradient(135deg, var(--success-color), #1e7e34);
+    border-color: var(--success-color);
+}
+
+.btn-circlek-warning {
+    background: linear-gradient(135deg, var(--warning-color), #e0a800);
+    border-color: var(--warning-color);
+    color: var(--dark-color);
+}
+
+.btn-circlek-danger {
+    background: linear-gradient(135deg, var(--danger-color), #c82333);
+    border-color: var(--danger-color);
+}
+
+.card-circlek {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px var(--shadow-color);
+    transition: all 0.3s ease;
+    margin-bottom: 1.5rem;
+    overflow: hidden;
+}
+
+.card-circlek:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 12px var(--shadow-color);
+}
+
+.form-control-circlek {
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    transition: all 0.3s ease;
+    background: white;
+    font-family: var(--font-family-base);
+}
+
+.form-control-circlek:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.alert-circlek {
+    border: none;
+    border-radius: 8px;
+    padding: 1rem 1.5rem;
+    margin-bottom: 1rem;
+    border-left: 4px solid var(--primary-color);
+    background: rgba(0, 123, 255, 0.05);
+}
+
+.alert-circlek-success {
+    border-left-color: var(--success-color);
+    background: rgba(40, 167, 69, 0.05);
+}
+
+.alert-circlek-warning {
+    border-left-color: var(--warning-color);
+    background: rgba(255, 193, 7, 0.05);
+    color: var(--dark-color);
+}
+
+.alert-circlek-danger {
+    border-left-color: var(--danger-color);
+    background: rgba(220, 53, 69, 0.05);
+    color: var(--dark-color);
+}
+
+/* ===== ESTILOS HEREDADOS (MANTENER COMPATIBILIDAD) ===== */
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
 }

@@ -28,7 +28,7 @@ namespace Web.Front.Controllers
         public async Task<IActionResult> Search(string search)
         {
             var client = _clientFactory.CreateClient("Api");
-            var products = await client.GetFromJsonAsync<List<ProductViewModel>>(
+            var products = await client.GetFromJsonAsync<PagedProductsResult>(
                 $"products?search={search}");
 
             return PartialView("_ProductResults", products);
@@ -162,6 +162,9 @@ namespace Web.Front.Controllers
         private async Task<List<SaleViewModel>> getSalesSave()
         {
             var client = _clientFactory.CreateClient("Api");
+            var response = await client.GetAsync("sales");
+
+
             var sales = await client.GetFromJsonAsync<List<SaleViewModel>>($"sales");
 
             return sales.ToList();

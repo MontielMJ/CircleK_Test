@@ -15,7 +15,7 @@ namespace Web.Front.Controllers
         public async Task<IActionResult> Index(string? search)
         {
             var client = _clientFactory.CreateClient("Api");
-            var products = await client.GetFromJsonAsync<List<ProductDto>>(
+            var products = await client.GetFromJsonAsync<PagedProductsResult>(
                 $"products?search={search}");
 
             return View(products);

@@ -1,6 +1,7 @@
-﻿@model List<ProductViewModel>
+﻿@using Application.Dtos
+@model PagedProductsResult
 
-@if (!Model.Any())
+@if (!Model.Products.Any())
 {
     <div class="alert alert-warning mb-0">
         <i class="bi bi-exclamation-triangle"></i>
@@ -19,7 +20,7 @@ else
             </tr>
         </thead>
         <tbody>
-            @foreach (var p in Model)
+            @foreach (var p in Model.Products)
             {
                 <tr>
                     <td>@p.SKU</td>

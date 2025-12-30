@@ -14,10 +14,10 @@ namespace Web.Api.Controllers
         private readonly ISalesUseCase _salesUseCase;
         public SalesController(ISalesUseCase salesUseCase)
         {
-           _salesUseCase = salesUseCase;
+            _salesUseCase = salesUseCase;
         }
 
-[HttpPost("{id}/payments")]
+        [HttpPost("{id}/payments")]
         public async Task<IActionResult> Pay(int id, PaySaleRequest request)
         {
             try
@@ -43,7 +43,7 @@ namespace Web.Api.Controllers
             }
         }
 
-[HttpPost("{id}/cancel")]
+        [HttpPost("{id}/cancel")]
         public async Task<IActionResult> Cancel(int id)
         {
             try
@@ -65,7 +65,7 @@ namespace Web.Api.Controllers
             }
         }
 
-[HttpPost]
+        [HttpPost]
         public async Task<IActionResult> Create(CreateSaleRequest request)
         {
             try
@@ -90,7 +90,7 @@ namespace Web.Api.Controllers
                 return StatusCode(500, new { error = "An unexpected error occurred" });
             }
         }
-[HttpGet]
+        [HttpGet]
         public async Task<IActionResult> GetSales()
         {
             try
