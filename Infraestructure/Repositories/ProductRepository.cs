@@ -1,4 +1,4 @@
-﻿using Application.Interfaces;
+using Application.Interfaces;
 using Application.Interfaces.Repositories;
 using Domain.Entities;
 using Infraestructure.Data;
@@ -15,29 +15,33 @@ public class ProductRepository : IProductRepository
         _context = context;
     }
 
-    public Task DeleteProductAsync(int id, CancellationToken cancellationToken = default)
+public async Task DeleteProductAsync(int id, CancellationToken cancellationToken = default)
     {
-       Product? product = _context.Products
-            .FirstOrDefault(p => p.Id == id);
+        Product? product = await _context.Products
+            .FirstOrDefaultAsync(p => p.Id == id, cancellationToken);
         if (product != null)
         {
             _context.Products.Remove(product);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync(cancellationToken);
         }
-        return Task.CompletedTask;
-
     }
 
-    public Task<Product?> GetByIdAsync(int id, CancellationToken cancellationToken = default)
+public async Task<Product?> GetByIdAsync(int id, CancellationToken cancellationToken = default)
     {
-        Product? product = _context.Products
-            .FirstOrDefault(p => p.Id == id);
-        return Task.FromResult<Product?>(product);
+        return await _context.Products
+            .FindAsync(new object[] { id }, cancellationToken);
     }
 
-    public async Task<List<Product>> GetProductsAsync(string? search = null, int page = 1, int pageSize = 20, CancellationToken cancellationToken = default)
+    public async Task<Product?> GetBySkuAsync(string sku, CancellationToken cancellationToken = default)
     {
-        var query = _context.Products.AsQueryable();
+        return await _context.Products
+            .FirstOrDefaultAsync(p => p.SKU == sku, cancellationToken);
+    }
+
+public async Task<(List<Product> Products, int TotalCount)> GetProductsAsync(string? search = null, int page = 1, int pageSize = 20, CancellationToken cancellationToken = default)
+    {
+        var query = _context.Products
+            .Where(p => p.IsActive);
 
         if (!string.IsNullOrWhiteSpace(search))
         {
@@ -46,36 +50,40 @@ public class ProductRepository : IProductRepository
                 p.Name.Contains(search));
         }
 
-        return await query
+        var totalCount = await query.CountAsync(cancellationToken);
+
+        var products = await query
             .OrderBy(p => p.Name)
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
             .ToListAsync(cancellationToken);
+
+        return (products, totalCount);
     }
 
-    public Task<Product?> InsertProductAsync(Product product, CancellationToken cancellationToken = default)
+public async Task<Product?> InsertProductAsync(Product product, CancellationToken cancellationToken = default)
     {
-        Product? existingProduct = _context.Products
-            .FirstOrDefault(p => p.SKU == product.SKU);
+        Product? existingProduct = await _context.Products
+            .FirstOrDefaultAsync(p => p.SKU == product.SKU, cancellationToken);
         if (existingProduct != null)
-            return Task.FromResult<Product?>(null);
+            return null;
+        
         _context.Products.Add(product);
-        _context.SaveChanges();
-        return Task.FromResult<Product?>(product);
+        await _context.SaveChangesAsync(cancellationToken);
+        return product;
     }
 
-    public Task<Product?> UpdateProductAsync(Product product, CancellationToken cancellationToken = default)
+public async Task<Product?> UpdateProductAsync(Product product, CancellationToken cancellationToken = default)
     {
-        Product? existingProduct = _context.Products
-            .FirstOrDefault(p => p.Id == product.Id);
+        Product? existingProduct = await _context.Products
+            .FirstOrDefaultAsync(p => p.Id == product.Id, cancellationToken);
         if (existingProduct == null)
-            return Task.FromResult<Product?>(null);
+            return null;
 
         existingProduct.Name = product.Name;
         existingProduct.Price = product.Price;
         existingProduct.Stock = product.Stock;
-        _context.SaveChanges();
-        return Task.FromResult<Product?>(existingProduct);
-
+        await _context.SaveChangesAsync(cancellationToken);
+        return existingProduct;
     }
 }

@@ -1,8 +1,9 @@
-﻿using Application.Dtos;
+using Application.Dtos;
 using Application.Interfaces.Repositories;
 using Application.Services;
 using Domain.Entities;
 using Domain.Enums;
+using Domain.Exceptions;
 using Infraestructure.Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -19,16 +20,16 @@ namespace Infraestructure.Repositories
         }
         public async Task CancelSaleAsync(int saleId, CancellationToken ct = default)
         {
-            var sale = await _context.Sales
+var sale = await _context.Sales
                 .Include(s => s.Items)
                     .ThenInclude(i => i.Product)
                 .FirstOrDefaultAsync(s => s.Id == saleId, ct);
 
             if (sale == null)
-                throw new Exception("Venta no encontrada");
+                throw new NotFoundException("Sale", saleId);
 
-            if (sale.Status != SaleStatus.Paid)
-                throw new Exception("Solo se pueden cancelar ventas pagadas");
+if (sale.Status != SaleStatus.Paid)
+                throw new BusinessException("Solo se pueden cancelar ventas pagadas");
 
             foreach (var item in sale.Items)
             {
@@ -41,8 +42,8 @@ namespace Infraestructure.Repositories
 
         public async Task<SaleDto> CreateSaleAsync(CreateSaleRequest sales, CancellationToken ct = default)
         {
-            if (!sales.Items.Any())
-                throw new Exception("La venta debe tener al menos un producto");
+if (!sales.Items.Any())
+                throw new ValidationException("La venta debe tener al menos un producto");
 
             var productIds = sales.Items.Select(i => i.ProductId).ToList();
 
@@ -50,8 +51,8 @@ namespace Infraestructure.Repositories
                 .Where(p => productIds.Contains(p.Id) && p.IsActive)
                 .ToListAsync(ct);
 
-            if (products.Count != productIds.Count)
-                throw new Exception("Uno o más productos no existen");
+if (products.Count != productIds.Count)
+                throw new NotFoundException("Uno o más productos no existen");
 
             var sale = new Sale
             {
@@ -63,8 +64,8 @@ namespace Infraestructure.Repositories
             {
                 var product = products.First(p => p.Id == item.ProductId);
 
-                if (item.Quantity <= 0)
-                    throw new Exception("Cantidad inválida");
+if (item.Quantity <= 0)
+                    throw new ValidationException("Cantidad inválida");
 
                 var saleItem = new SaleItem
                 {
@@ -109,17 +110,17 @@ namespace Infraestructure.Repositories
                 .Include(s => s.Payments)
                 .FirstOrDefaultAsync(s => s.Id == saleId, ct);
 
-            if (sale == null)
-                return PaySaleResult.Fail("Venta no encontrada");
+if (sale == null)
+                throw new NotFoundException("Sale", saleId);
 
             if (sale.Status != SaleStatus.Open && sale.Status != SaleStatus.Pending)
-                return PaySaleResult.Fail($"La venta no puede ser pagada. Estado actual: {sale.Status}");
+                throw new BusinessException($"La venta no puede ser pagada. Estado actual: {sale.Status}");
 
             foreach (var item in sale.Items)
             {
                 if (item.Product.Stock < item.Quantity)
                 {
-                    return PaySaleResult.Fail($"Stock insuficiente: {item.Product.Name}");
+                    throw new InsufficientStockException(item.Product.Name, item.Quantity, item.Product.Stock);
                 }
             }
             decimal totalPaid = sale.Payments
@@ -130,8 +131,8 @@ namespace Infraestructure.Repositories
             Payment resultPayment = null;
             foreach (var p in request.Payments)
             {
-                if (p.Amount <= 0)
-                    return PaySaleResult.Fail("El monto debe ser mayor a cero");
+if (p.Amount <= 0)
+                    throw new ValidationException("El monto debe ser mayor a cero");
 
                 var payment = new Payment
                 {
@@ -145,9 +146,9 @@ namespace Infraestructure.Repositories
                 {
                     resultPayment = _paymentService.ProcessPayment(sale, payment);
                 }
-                catch
+catch
                 {
-                    return PaySaleResult.Fail($"Error procesando pago con método {p.Method}");
+                    throw new InvalidPaymentException($"Error procesando pago con método {p.Method}");
                 }
 
                 sale.Payments.Add(payment);
@@ -213,9 +214,9 @@ namespace Infraestructure.Repositories
             return cashPaid > sale.Total ? cashPaid - sale.Total : 0;
         }
 
-        public Task<List<SaleDto>> GetSalesAsync()
+public async Task<List<SaleDto>> GetSalesAsync(CancellationToken ct = default)
         {
-            List<SaleDto> sales = _context.Sales
+            return await _context.Sales
                  .Select(s => new SaleDto
                  {
                      Id = s.Id,
@@ -225,9 +226,7 @@ namespace Infraestructure.Repositories
                      Total = s.Total,
                      Status = s.Status.ToString()
                  })
-                 .ToList();
-
-            return Task.FromResult(sales);
+                 .ToListAsync(ct);
         }
     }
 }

@@ -2,15 +2,33 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+// Configure HttpClient to call API
 builder.Services.AddHttpClient("Api", c =>
 {
     c.BaseAddress = new Uri("https://localhost:7192/api/");
 });
 
 builder.Services.AddSession();
+
+// Configure CORS to allow API calls
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowApi",
+        builder =>
+        {
+            builder.WithOrigins("https://localhost:7192")
+                   .AllowAnyMethod()
+                   .AllowAnyHeader()
+                   .AllowCredentials();
+        });
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
+app.UseCors("AllowApi");
+
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
